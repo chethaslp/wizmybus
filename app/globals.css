@@ -4,8 +4,8 @@
 
 
 body, .bv {
-  background: rgb(255,255,255);
-  background: linear-gradient(146deg, rgba(255,255,255,1) 0%, rgba(211,227,255,1) 100%);
+  background: rgb(40,40,40);
+  background: linear-gradient(146deg, rgba(40,40,40,1) 0%, rgba(73,15,134,1) 100%);
 }
 
 .leaflet-container {

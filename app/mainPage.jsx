@@ -187,12 +187,12 @@ export default function Home() {
     </Modal>
 
     <div className='w-full md:w-1/4 rounded-r-lg rounded-b-xl -mr-2 z-[10000]'>
-      <Card className='text-black !h-full !w-full'>
+      <Card className='text-black !h-full !w-full !bv'>
         <Card.Header className='text-5xl'><Logo/></Card.Header>
-        <Card.Body>
+        <Card.Body className=''>
           
           <Form className='border border-gray-500 rounded p-3 gap-2' onSubmit={sbmit}>
-            <Card.Title>Report Issue</Card.Title>
+            <Card.Title>Search bus</Card.Title>
             <hr/>
             <Form.Group controlId="fm_eml" className="mt-2" >
               <Form.Label>Email address <small className='text-muted'>(required)</small></Form.Label>
@@ -235,9 +235,9 @@ export default function Home() {
           </Form>
           
         </Card.Body>
-        <Card.Footer className='text-muted text-center'>
+        {/* <Card.Footer className='text-muted text-center'>
           Made with 💖 by <a href='https://github.com/chethaslp' target='_blank' className='no-underline'>@clp</a>
-        </Card.Footer>
+        </Card.Footer> */}
       </Card>
     </div>
     <div className='w-full md:w-3/4 h-screen'>

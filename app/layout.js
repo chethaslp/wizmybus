@@ -5,8 +5,8 @@ import { Comfortaa } from "next/font/google";
 const f = Comfortaa({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'DMU',
-  description: 'Disaster Management Utility',
+  title: 'Wizmybus App',
+  description: 'Where is my Bus?',
 }
 
 export default function RootLayout({ children }) {
