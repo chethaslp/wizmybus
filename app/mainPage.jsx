@@ -6,7 +6,10 @@ import "react-leaflet-fullscreen/styles.css";
 import "leaflet-loading/src/Control.Loading.css";
 import 'leaflet-geosearch/dist/geosearch.css';
 import { markerBlue, markerRed, markerSelf } from '@/components/map/icons';
-import { Card, Form, Button, Modal} from 'react-bootstrap';
+import { CgArrowsExchangeAltV } from "react-icons/cg";
+import { IoMdSearch } from "react-icons/io";
+import { Card, Form, Button, Modal, FloatingLabel} from 'react-bootstrap';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 // Leaflet Imports
 import L from "leaflet";
@@ -22,6 +25,7 @@ import { Logo } from '@/components/ui/logo';
 import { get } from 'firebase/database';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { stops } from '@/components/map/stoplist';
 
 
 const getIssueString = (i) =>  ["Water Unavailibilty", "Sewer Overflow", "Water Pipeline Disrupt", "Water rise in sea/rivers", "Flood warning!"][parseInt(i)-1]
@@ -145,6 +149,9 @@ export default function Home() {
   const [position, setPosition] = useState()
   const [initDone, setInitDone] = useState(false)
 
+  const [frmlocation, setFrmlocation] = useState();
+  const [tolocation, setTolocation] = useState();
+
   const [showModal, setShowModal] = useState(false);
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -171,7 +178,7 @@ export default function Home() {
         document.body.scrollTop = document.documentElement.scrollTop = 0;
    });
   },[])
-  return <div className='grid md:flex h-screen w-screen'>
+  return <div className='grid h-screen w-screen grid-flow-row grid-rows-[600px_auto] md:grid-rows-1 md:grid-cols-[minmax(20%,25%)_4fr] md:grid-flow-col'>
     <Modal centered show={showModal} onHide={handleCloseModal}>
       <Modal.Header closeButton>
         <Modal.Title>Modal heading</Modal.Title>
@@ -186,52 +193,60 @@ export default function Home() {
       </Modal.Footer>
     </Modal>
 
-    <div className='w-full md:w-1/4 rounded-r-lg rounded-b-xl -mr-2 z-[10000]'>
+    <div className='order-1 rounded-r-lg rounded-b-xl md:-mr-2 -mt-2 z-[10000]'>
       <Card className='text-black !h-full !w-full !bv'>
         <Card.Header className='text-5xl'><Logo/></Card.Header>
-        <Card.Body className=''>
+        <Card.Body className='overflow-auto'>
           
           <Form className='border border-gray-500 rounded p-3 gap-2' onSubmit={sbmit}>
-            <Card.Title>Search bus</Card.Title>
+            <Card.Title className='!flex flex-row gap-2 items-center'><IoMdSearch size={30}/> Search Bus</Card.Title>
             <hr/>
-            <Form.Group controlId="fm_eml" className="mt-2" >
-              <Form.Label>Email address <small className='text-muted'>(required)</small></Form.Label>
-              <Form.Control type="email" required={true} placeholder="Enter email" />
+            <Form.Group controlId="fr-frm" className='mb-3'>
+              <Form.Label>From: </Form.Label>
+              <Typeahead
+                placeholder='Enter a location'
+                selected={frmlocation}
+                onChange={(selected) => {
+                  console.log(selected)
+                  setFrmlocation(selected)
+                }}
+                options={stops}
+              />
             </Form.Group>
-            <Form.Group className="mt-2 mb-3" controlId="fm_ist">
-              <Form.Label>Issue Type <small className='text-muted'>(required)</small></Form.Label>
-              <Form.Control as="select" required={true}>
-                <option disabled selected>Select</option>
-                <option className='bg-blue-500 text-white' value="1">Water unavailibilty</option>
-                <option className='bg-blue-500 text-white' value="2">Sewer Overflow</option>
-                <option className='bg-blue-500 text-white' value="3">Water Pipe disrupt</option>
-                <option className='bg-yellow-600 text-white' value="4">Water level rise in Sea/River</option>
-                <option className='bg-red-600 text-white' value="5">Flood warning</option>
-              </Form.Control>
+
+          <div className='flex items-center justify-center'>
+            <CgArrowsExchangeAltV size={30} className='shadow-sm cursor-pointer border rounded  m-2 scale-100 hover:scale-110 hover:shadow-lg' 
+            onClick={()=>{
+              setFrmlocation(tolocation)
+              setTolocation(frmlocation)
+            }}/>
+          </div>
+
+            <Form.Group controlId="fr-to">
+              <Form.Label>To: </Form.Label>
+              <Typeahead
+                placeholder='Enter a location'
+                selected={tolocation}
+                onChange={(selected) => {
+                  console.log(selected)
+                  setTolocation(selected)
+                }}
+                options={stops}
+              />
             </Form.Group>
+            <div className='mt-3 flex justify-center '>
+              <Button variant="primary" type="submit">
+                Search
+              </Button>
+            </div>
+          
+            <hr className='mt-5'/>
             <Form.Group className="mb-2" controlId="fm_add">
-              <Form.Label>Current Address</Form.Label>
+              <Form.Label>Your current Location</Form.Label>
               <Form.Control  required={true} as="textarea" rows={3} value={cAddress}/>
             </Form.Group>
-            <Form.Group className="mb-2" controlId="fm_des">
-              <Form.Label>Detailed Description</Form.Label>
-              <Form.Control as="textarea" rows={3} />
-            </Form.Group>
-            <Form.Group className='mt-2 mb-2'>
-              <Form.Label>Image for reference</Form.Label>
-              <Form.Control type="file" onChange={(e)=>
-                  {
-                    var files = e.target.files
-                    if (files[0] && files[0].size < 5000000 && files[0].type.startsWith("image")) ;
-                    else console.log("INVALID FILE");
-                  }}
-                  />
-            </Form.Group>
            
-           <small className='text-muted mt-2 mb-1'>Submission time will be recorded.</small><br/>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
+            
           </Form>
           
         </Card.Body>
@@ -240,7 +255,7 @@ export default function Home() {
         </Card.Footer> */}
       </Card>
     </div>
-    <div className='w-full md:w-3/4 h-screen'>
+    <div className='-order-1 md:!order-2'>
         <MapContainer center= {[8.432719,77.076050]}  zoom={13} scrollWheelZoom={true} loadingControl={true} >
           {searchParams.has("st")? <>
             <ReactLeafletGoogleLayer type={'satellite'} />
@@ -256,10 +271,9 @@ export default function Home() {
         </MapContainer>
         
     </div>
-    <div className='z-[1000000] md:d-none' onClick={()=>{
+    {/* <div className='z-[1000000] md:d-none' onClick={()=>{
       document.body.scrollTop = document.documentElement.scrollTop = 0
     }}>
-      Hi
-    </div>
+    </div> */}
 </div>
 }
