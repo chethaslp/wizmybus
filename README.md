@@ -20,7 +20,42 @@ An app to show real time location of public transport buses to consumers, which 
 - [x] Bus Timing search (KSRTC) (Partially Done)
 - [x] Arrival time prediction (Partially Done)
 
-## Getting Started
+## Folder structure
+```
+wizmybus
+│   - README.md
+│
+└───app
+│   │- mainPage.jsx <-- [landing page]
+│   │- loading.jsx
+│   │- page.jsx
+│   │- style.css
+│   │   
+│   └───components
+│       └───fb
+│       |   |- auth.jsx (Firebase Authentication Code)
+│       |   |- db.jsx (Firebase Database Code)
+│       |   |- config.jsx (Firebase Configs)
+│       |   
+│       └───map
+│       |   |- icons.js (Icons for Map Markers)
+│       |   |- stoplist.js (List of 2k+ bus stops)
+│       |   |- util.jsx (Other Utilities)
+│       |   
+│       └───ui
+│           |- noSSR.js
+│   
+└───img (for Readme.md)
+.   │- workflow.png
+.
+.
+```
+
+## Demo
+
+Link here
+
+## Getting Started (Locally)
 
 First, run the development server:
 
