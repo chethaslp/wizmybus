@@ -7,6 +7,7 @@ import "react-leaflet-fullscreen/styles.css";
 import "leaflet-loading/src/Control.Loading.css";
 import "leaflet-geosearch/dist/geosearch.css";
 import { markerBlue, markerRed, markerSelf } from "@/components/map/icons";
+import { MdMyLocation } from "react-icons/md";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
 import { IoMdSearch } from "react-icons/io";
 import { Card, Form, Button, Modal, FloatingLabel } from "react-bootstrap";
@@ -76,7 +77,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
       )
         .then((r) => r.json())
         .then((res) => {
-          setCAddress(res.display_name);
+          setCAddress(res.address.suburb);
         });
     });
 
@@ -90,18 +91,10 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
             /*
 
               d:list [Data Object]
-                dd:str -> Data description
-                em:str -> Email
+                n:str -> Bus Display Name
+                bid:str -> BUS ID (unique)
                 t:str -> Datetime
-                lq:list -> [latlng:list, address:str]
-                ty:str -> Issue type
-
-                For `ty`:
-                  1 -> Water Unavailibilty
-                  2 -> Sewer Overflow
-                  3 -> Water Pipe Disrupt
-                  4 -> Water rise in sea/rivers
-                  5 -> Flood warning
+                lq:list -> [latlng:list [lat:float,lng:float], stop_n:str]
 
               */
             let marker;
@@ -143,9 +136,10 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
     // -> Gets readable address from the location
 
     map.on("geosearch/showlocation", (e) => {
-      console.log(e);
       setPosition([e.location.y, e.location.x]);
-      setCAddress(e.location.label);
+      const a = e.location.label.split(", ")
+      setCAddress(a[a.length
+        -5]);
     });
 
     map.on("geosearch/marker/dragend", (e) => {
@@ -160,7 +154,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
         )
           .then((r) => r.json())
           .then((res) => {
-            setCAddress(res.display_name);
+            setCAddress(res.address.suburb)
           });
       }
     });
@@ -227,10 +221,13 @@ export default function Home() {
         </Modal.Footer>
       </Modal>
 
-      <div className="order-1 rounded-r-lg rounded-b-xl md:-mr-2 -mt-2 z-[10000]">
+      <div className="rounded-r-lg rounded-b-xl md:-mr-2 -mt-2 z-[10000]">
         <Card className="text-black !h-full !w-full !bv">
-          <Card.Header className="text-5xl">
-            <Logo />
+          <Card.Header className="text-5xl flex flex-row">
+            <Logo /> 
+            <div className="cursor-pointer text-xl font-semibold rounded p-2 flex flex-row gap-3 items-center">
+              /  {cAddress}
+              </div>
           </Card.Header>
           <Card.Body className="overflow-auto">
             <Form
@@ -282,17 +279,6 @@ export default function Home() {
                   Search
                 </Button>
               </div>
-
-              <hr className="mt-5" />
-              <Form.Group className="mb-2" controlId="fm_add">
-                <Form.Label>Your current Location</Form.Label>
-                <Form.Control
-                  required={true}
-                  as="textarea"
-                  rows={3}
-                  value={cAddress}
-                />
-              </Form.Group>
             </Form>
           </Card.Body>
           {/* <Card.Footer className='text-muted text-center'>
@@ -300,7 +286,7 @@ export default function Home() {
         </Card.Footer> */}
         </Card>
       </div>
-      <div className="-order-1 md:!order-2">
+      <div className="order-1 md:!order-2 h-[inherit]">
         <MapContainer
           center={[8.432719, 77.07605]}
           zoom={13}
