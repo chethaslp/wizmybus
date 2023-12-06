@@ -1,0 +1,13 @@
+
+
+@media screen and (max-width: 768px){
+    .responsive{
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .leaflet-left {
+        visibility: hidden;
+    }
+    
+    
+}
