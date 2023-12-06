@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+<p align="center">
+  <h1>Where is my bus?</h1>
+</p>
+
+## Usage
+An app to show real time location of public transport buses to consumers, which enables efficient crowd and time management.
+
+## Workflow
+![Workflow](https://github.com/chethaslp/wizmybus/blob/master/img/workflow.png?raw=true)
+
+## TODO
+- [x] ~Include map view~
+- [X] ~Get Bus Database~ (Collected more than 40k bus routes!)
+- [ ] Real Time location feature
+- [ ] Create QR Code page
+- [ ] Create Client and Operator pages
+- [ ] Add Authentication
+- [ ] Write Rules for Firestore
+- [x] Bus Timing search (KSRTC) (Partially Done)
+- [x] Arrival time prediction (Partially Done)
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
+npx next dev
+# or
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
 # or
 bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
