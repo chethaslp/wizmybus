@@ -100,22 +100,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
                 lq:list -> [latlng:list [lat:float,lng:float], stop_n:str]
 
               */
-            let marker;
-            if (d.ty == "5") {
-              marker = markerRed; // Marker for Flood warning
-              L.circle(d.lq[0], 1000, {
-                color: "red",
-                stroke: false,
-                fillOpacity: 0.5,
-              }).addTo(map); // Adds a red circle of 1000m radius around the marker
-            } else if (d.ty == "4") {
-              marker = markerBlue; // Marker for Water Level Rise
-              L.circle(d.lq[0], 1000, {
-                color: "yellow",
-                stroke: false,
-                fillOpacity: 0.5,
-              }).addTo(map);
-            } else marker = markerBlue;
+            let marker =  markerRed; 
             L.marker(d.lq[0], { icon: marker })
               .bindTooltip(
                 `<b>${getIssueString(
