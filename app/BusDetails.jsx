@@ -11,7 +11,8 @@ import {
   TimelineOppositeContent,
   Skeleton
 } from "@mui/lab";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { Stack } from "react-bootstrap";
 
 function BusDetails() {
   const [data, setdata] = useState(false);
@@ -36,11 +37,14 @@ function BusDetails() {
             <div className="bus-card"></div>
             <div className="bus-card"></div>
           </>
-        ) : (<>
-            <Skeleton variant="text" height={300}/>
-            <Skeleton variant="text" height={300}/>
-            <Skeleton variant="text" height={300}/>
-            </>
+        ) : (
+            <Stack spacing={1}>
+            <Skeleton variant="text" height={300}  />
+            <Skeleton variant="text" height={300}  />
+            <Skeleton variant="text" height={300}  />
+            </Stack>
+          
+            
         )}
       </div>
       <div style={{ width: "55%" }}>
