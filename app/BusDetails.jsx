@@ -14,9 +14,7 @@ import {
 import { Box, Typography } from "@mui/material";
 import { Stack } from "react-bootstrap";
 
-function BusDetails() {
-  const [data, setdata] = useState(true);
-  const [open, setopen] = useState(false)
+function BusDetails({setopen,setdata, data, open}) {
     const skeletonStyle = {
       marginBottom: 10, // Adjust the margin-bottom value as needed
     };
@@ -26,7 +24,7 @@ function BusDetails() {
     
     <div className="bus-detail">
       <div className="border-r-2 pr-5 h-full" style={{ width: "45%", cursor:"pointer"}}>
-        {data ? (
+        {data ? ((data == 404)?<div></div>:
           <>
             <div className="bus-card" onClick={()=> setopen(true)}>
               <div className="top">

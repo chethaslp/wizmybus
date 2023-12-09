@@ -129,6 +129,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
   return null;
 }
 
+
 export default function Home() {
   const searchParams = useSearchParams();
   const [cAddress, setCAddress] = useState();
@@ -142,7 +143,23 @@ export default function Home() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
-  const [busPositon, setBuspostion] = useState([]);
+  const [data, setdata] = useState(true);
+  const [open, setopen] = useState(false)
+
+  const [busPositon, setBuspostion] = useState();
+
+
+  function getBusdata(setdata){
+    const resp = fetch(
+      `/api/get_loc/?to=${tolocation}&from=${frmlocation}`
+    );
+    if (resp.ok){
+      const data = resp.json();
+      setdata(data.data);
+    }else{
+      setdata(404)
+    }
+  }
 
   const sbmit = (e) => {
     e.preventDefault();
@@ -189,7 +206,7 @@ export default function Home() {
           <Modal.Title>Available Buses</Modal.Title>
         </Modal.Header>
         <Modal.Body >
-          <BusDetails/>
+          <BusDetails setopen={setopen} setdata={setdata} data={data} open={open}/>
         </Modal.Body>
       </Modal>
 
@@ -292,11 +309,12 @@ export default function Home() {
                 setPosition={setPosition}
                 handleShowModal={handleShowModal}
               />
-              <Marker position={busPositon.l}>
-              <Popup>
-              {busPositon[1]}
-              </Popup>
-            </Marker>
+              {(busPositon)?
+              <Marker position={{lat: busPositon.l[0], lng: busPositon.l[1]}}>
+                <Popup>
+                {busPositon[1]}
+                </Popup>
+            </Marker>:null}
             </>
           ) : null}
         </MapContainer>
