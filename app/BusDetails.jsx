@@ -9,21 +9,26 @@ import {
   TimelineContent,
   TimelineDot,
   TimelineOppositeContent,
-  Skeleton
+  Skeleton,
 } from "@mui/lab";
 import { Box, Typography } from "@mui/material";
 import { Stack } from "react-bootstrap";
 
 function BusDetails() {
-  const [data, setdata] = useState(false);
-
+  const [data, setdata] = useState(true);
+  const [open, setopen] = useState(false)
+    const skeletonStyle = {
+      marginBottom: 10, // Adjust the margin-bottom value as needed
+    };
+ 
+  
   return (
+    
     <div className="bus-detail">
-      <div className="border-r-2 pr-5 h-full" style={{ width: "45%" }}>
+      <div className="border-r-2 pr-5 h-full" style={{ width: "45%", cursor:"pointer"}}>
         {data ? (
           <>
-            <div className="bus-card"></div>
-            <div className="bus-card">
+            <div className="bus-card" onClick={()=> setopen(true)}>
               <div className="top">
                 <h6>Super Fast</h6>
                 <p>10:00 - 12:00</p>
@@ -38,17 +43,36 @@ function BusDetails() {
             <div className="bus-card"></div>
           </>
         ) : (
-            <Stack spacing={1}>
-            <Skeleton variant="text" height={300}  />
-            <Skeleton variant="text" height={300}  />
-            <Skeleton variant="text" height={300}  />
-            </Stack>
-          
-            
+          <>
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+          </>
         )}
       </div>
-      <div style={{ width: "55%" }}>
-        <Timeline position="left">
+      <div style={{ width: "55%", display:"flex", justifyContent:"center", alignItem:"center" }}>
+        {open ? (<Timeline position="left">
           <TimelineItem variant="right">
             <TimelineOppositeContent color="text.secondary">
               10:00am
@@ -93,7 +117,8 @@ function BusDetails() {
             </TimelineSeparator>
             <TimelineContent>Kozhikode</TimelineContent>
           </TimelineItem>
-        </Timeline>
+        </Timeline>) : ( <h5>Select any bus</h5> )}
+        
       </div>
     </div>
   );
