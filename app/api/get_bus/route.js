@@ -10,10 +10,10 @@ const pool = new Pool({
   port: 5432,
 });
 
-const getBuses = async (to,from) => {
+const getBus = async (id) => {
   try {
     return await new Promise(function (resolve, reject) {
-      pool.query("select * from public.bus_list where bus_route like '%"+to+" % "+from+"%'", (error, results) => {
+      pool.query("select * from route_"+id, (error, results) => {
         if (error) {
           reject(error);
         }
@@ -31,23 +31,27 @@ const getBuses = async (to,from) => {
 };
 
 export async function GET(req) {
-  const to = req.nextUrl.searchParams.get("to");
+  const id = req.nextUrl.searchParams.get("id");
   
-  const from = req.nextUrl.searchParams.get("from");
+  // const from = req.nextUrl.searchParams.get("from");
   // const t = req.nextUrl.searchParams.get("t");
 
-  if (!to) {
+  if (!id) {
     return NextResponse.json(
-      { error: 'Missing "to".' },
+      { error: 'Missing "id".' },
       { status: 400 }
     );
-  } else if (!from) {
+  } 
+  // else if (!from) {
+  //   return NextResponse.json(
+  //     { error: 'Missing "from".' },
+  //     { status: 400 }
+  //   );
+   const a = await getBus(id)
+   if(a.length ==0) {
     return NextResponse.json(
-      { error: 'Missing "from".' },
-      { status: 400 }
-    );
-  }
-   const a = await getBuses(to,from)
-   
+      { error: "Bus Route doesn't exist." },
+      { status: 404 })
+   }
    return NextResponse.json({s: (a.length!=0), data: JSON.stringify(a)})
   }
