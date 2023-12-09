@@ -2,11 +2,17 @@
 
 // UI imports
 import "leaflet/dist/leaflet.css";
-import './style.css'
+import "./style.css";
 import "react-leaflet-fullscreen/styles.css";
 import "leaflet-loading/src/Control.Loading.css";
 import "leaflet-geosearch/dist/geosearch.css";
-import "@/components/ui/cmodal.css"
+import "@/components/ui/cmodal.css";
+import { useTheme } from "@mui/material/styles";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 import { markerBlue, markerBus, markerSelf } from "@/components/map/icons";
 import { MdMyLocation } from "react-icons/md";
@@ -18,6 +24,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 // Leaflet Imports
 import L from "leaflet";
 import "leaflet-loading";
+import { ImSpinner2 } from 'react-icons/im'
 import { MapContainer, useMap, TileLayer } from "react-leaflet";
 import ReactLeafletGoogleLayer from "react-leaflet-google-layer";
 import { FullscreenControl } from "react-leaflet-fullscreen";
@@ -31,9 +38,8 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { stops } from "@/components/map/stoplist";
 import { RiLoader2Fill, RiLoader2Line } from "react-icons/ri";
-
-
-
+import { TextField, Box, Paper } from "@mui/material";
+import BusDetails from "./BusDetails";
 
 const getIssueString = (i) =>
   [
@@ -69,10 +75,8 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
   // -> reverse geocode it to a readable address,
   // -> adds self marker to the map
 
-
-
   useEffect(() => {
-    map.locate({ enableHighAccuracy: true })
+    map.locate({ enableHighAccuracy: true });
     map.on("locationfound", function (e) {
       var marker = L.marker(e.latlng, {
         icon: markerBus,
@@ -82,7 +86,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
 
       map.flyTo(e.latlng, map.getZoom());
       console.log(e.latlng);
-      
+
       fetch(
         `https://geocode.maps.co/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}`
       )
@@ -91,7 +95,6 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
           setCAddress(res.address.suburb);
         });
     });
-    
 
     // LOCATION MARKERS
     // -> Loads marker data from firebase DB, and adds to UI.
@@ -109,7 +112,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
                 lq:list -> [latlng:list [lat:float,lng:float], stop_n:str]
 
               */
-            let marker =  markerBus; 
+            let marker = markerBus;
             L.marker(d.lq[0], { icon: marker })
               .bindTooltip(
                 `<b>${getIssueString(
@@ -134,9 +137,8 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
 
     map.on("geosearch/showlocation", (e) => {
       setPosition([e.location.y, e.location.x]);
-      const a = e.location.label.split(", ")
-      setCAddress(a[a.length
-        -5]);
+      const a = e.location.label.split(", ");
+      setCAddress(a[a.length - 5]);
     });
 
     map.on("geosearch/marker/dragend", (e) => {
@@ -151,7 +153,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
         )
           .then((r) => r.json())
           .then((res) => {
-            setCAddress(res.address.suburb)
+            setCAddress(res.address.suburb);
           });
       }
     });
@@ -159,10 +161,9 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
     map.addControl(searchControl);
     return () => map.removeControl(searchControl);
   }, []);
- 
+
   return null;
 }
-
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -173,10 +174,9 @@ export default function Home() {
   const [frmlocation, setFrmlocation] = useState();
   const [tolocation, setTolocation] = useState();
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
-
 
   const sbmit = (e) => {
     e.preventDefault();
@@ -202,23 +202,38 @@ export default function Home() {
   }, []);
   return (
     <div className="responsive  grid h-screen w-screen grid-flow-row grid-rows-[600px_auto] md:grid-rows-1 md:grid-cols-[minmax(20%,25%)_4fr] md:grid-flow-col">
-      <Modal size="lg" scrollable backdropClassName="blur " className="!left-[10%] " show={showModal} onHide={handleCloseModal} variant="fullscreen">
+      <Modal
+        size="lg"
+        scrollable
+        backdropClassName="blur "
+        className="!left-[10%] "
+        show={showModal}
+        onHide={handleCloseModal}
+        variant="fullscreen"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Available Buses</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p>Modal body text</p>
+        <Modal.Body >
+          <BusDetails/>
         </Modal.Body>
       </Modal>
 
       <div className="rounded-r-lg rounded-b-xl md:-mr-2 -mt-2 md:mt-0 z-[10000]">
         <Card className="text-black !h-full !w-full !bv">
           <Card.Header className="text-5xl flex flex-row">
-            <Logo /> 
+            <Logo />
             {/* TODO: Check if location permission is OFF, if true, then change 'loading' icon to 'location disabled' icon. */}
             <div className="cursor-pointer text-xl font-semibold rounded p-2 flex flex-row gap-3 items-center">
-              /  {(cAddress)?cAddress:<div className="flex justify-center items-center"><RiLoader2Fill className="animate-spin"/></div>}
-              </div>
+              /{" "}
+              {cAddress ? (
+                cAddress
+              ) : (
+                <div className="flex justify-center items-center">
+                  <ImSpinner2 className="animate-spin" />
+                </div>
+              )}
+            </div>
           </Card.Header>
           <Card.Body className="overflow-auto">
             <Form
@@ -261,11 +276,15 @@ export default function Home() {
                   onChange={(selected) => {
                     setTolocation(selected);
                   }}
-                  options={stops.filter(item => item != frmlocation)}
+                  options={stops.filter((item) => item != frmlocation)}
                 />
               </Form.Group>
               <div className="mt-3 flex justify-center ">
-                <Button variant="primary" type="submit" onClick={handleShowModal}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={handleShowModal}
+                >
                   Search
                 </Button>
               </div>

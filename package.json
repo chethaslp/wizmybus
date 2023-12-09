@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/lab": "^5.0.0-alpha.155",
+    "@mui/material": "^5.14.20",
     "firebase": "^10.7.0",
     "geolocation": "^0.2.0",
     "leaflet": "^1.9.4",
