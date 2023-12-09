@@ -6,6 +6,8 @@ import './style.css'
 import "react-leaflet-fullscreen/styles.css";
 import "leaflet-loading/src/Control.Loading.css";
 import "leaflet-geosearch/dist/geosearch.css";
+import "@/components/ui/cmodal.css"
+
 import { markerBlue, markerRed, markerSelf } from "@/components/map/icons";
 import { MdMyLocation } from "react-icons/md";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
@@ -28,6 +30,7 @@ import { get } from "firebase/database";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { stops } from "@/components/map/stoplist";
+import { RiLoader2Fill, RiLoader2Line } from "react-icons/ri";
 
 const getIssueString = (i) =>
   [
@@ -206,27 +209,23 @@ export default function Home() {
     });
   }, []);
   return (
-    <div className="responsive grid h-screen w-screen grid-flow-row grid-rows-[600px_auto] md:grid-rows-1 md:grid-cols-[minmax(20%,25%)_4fr] md:grid-flow-col">
-      <Modal centered show={showModal} onHide={handleCloseModal}>
+    <div className="responsive  grid h-screen w-screen grid-flow-row grid-rows-[600px_auto] md:grid-rows-1 md:grid-cols-[minmax(20%,25%)_4fr] md:grid-flow-col">
+      <Modal size="lg" scrollable backdropClassName="blur " className="!left-[10%] " show={showModal} onHide={handleCloseModal} variant="fullscreen">
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Available Buses</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>Modal body text</p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
 
-      <div className="rounded-r-lg rounded-b-xl md:-mr-2 -mt-2 z-[10000]">
+      <div className="rounded-r-lg rounded-b-xl md:-mr-2 -mt-2 md:mt-0 z-[10000]">
         <Card className="text-black !h-full !w-full !bv">
           <Card.Header className="text-5xl flex flex-row">
             <Logo /> 
+            {/* TODO: Check if location permission is OFF, if true, then change 'loading' icon to 'location disabled' icon. */}
             <div className="cursor-pointer text-xl font-semibold rounded p-2 flex flex-row gap-3 items-center">
-              /  {cAddress}
+              /  {(cAddress)?cAddress:<div className="flex justify-center items-center"><RiLoader2Fill className="animate-spin"/></div>}
               </div>
           </Card.Header>
           <Card.Body className="overflow-auto">
@@ -268,14 +267,13 @@ export default function Home() {
                   placeholder="Enter a location"
                   selected={tolocation}
                   onChange={(selected) => {
-                    console.log(selected);
                     setTolocation(selected);
                   }}
                   options={stops}
                 />
               </Form.Group>
               <div className="mt-3 flex justify-center ">
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" onClick={handleShowModal}>
                   Search
                 </Button>
               </div>
