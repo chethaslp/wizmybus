@@ -8,7 +8,7 @@ import "leaflet-loading/src/Control.Loading.css";
 import "leaflet-geosearch/dist/geosearch.css";
 import "@/components/ui/cmodal.css"
 
-import { markerBlue, markerRed, markerSelf } from "@/components/map/icons";
+import { markerBlue, markerBus, markerSelf } from "@/components/map/icons";
 import { MdMyLocation } from "react-icons/md";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
 import { IoMdSearch } from "react-icons/io";
@@ -31,6 +31,9 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { stops } from "@/components/map/stoplist";
 import { RiLoader2Fill, RiLoader2Line } from "react-icons/ri";
+
+
+
 
 const getIssueString = (i) =>
   [
@@ -65,16 +68,21 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
   // -> Finds your current location,
   // -> reverse geocode it to a readable address,
   // -> adds self marker to the map
+
+
+
   useEffect(() => {
-    map.locate({ enableHighAccuracy: true }).on("locationfound", function (e) {
+    map.locate({ enableHighAccuracy: true })
+    map.on("locationfound", function (e) {
       var marker = L.marker(e.latlng, {
-        icon: markerSelf,
-        draggable: true,
+        icon: markerBus,
+        draggable: false,
       }).bindTooltip("Your are here.");
       marker.addTo(map);
 
       map.flyTo(e.latlng, map.getZoom());
       console.log(e.latlng);
+      
       fetch(
         `https://geocode.maps.co/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}`
       )
@@ -83,6 +91,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
           setCAddress(res.address.suburb);
         });
     });
+    
 
     // LOCATION MARKERS
     // -> Loads marker data from firebase DB, and adds to UI.
@@ -100,7 +109,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
                 lq:list -> [latlng:list [lat:float,lng:float], stop_n:str]
 
               */
-            let marker =  markerRed; 
+            let marker =  markerBus; 
             L.marker(d.lq[0], { icon: marker })
               .bindTooltip(
                 `<b>${getIssueString(
@@ -150,7 +159,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
     map.addControl(searchControl);
     return () => map.removeControl(searchControl);
   }, []);
-
+ 
   return null;
 }
 
@@ -168,8 +177,6 @@ export default function Home() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
-
-  
 
   const sbmit = (e) => {
     e.preventDefault();
@@ -254,7 +261,7 @@ export default function Home() {
                   onChange={(selected) => {
                     setTolocation(selected);
                   }}
-                  options={stops}
+                  options={stops.filter(item => item != frmlocation)}
                 />
               </Form.Group>
               <div className="mt-3 flex justify-center ">
