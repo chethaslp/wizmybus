@@ -157,7 +157,7 @@ export default function Home() {
   const handleShowModal = () => setShowModal(true);
 
   const [data, setdata] = useState([]);
-  const [open, setopen] = useState(false)
+  const [open, setopen] = useState([])
 
   const [busPositon, setBuspostion] = useState();
 
@@ -177,6 +177,21 @@ export default function Home() {
         })
       }else{
         setdata(404)
+      
+    }})
+  }
+
+  async function getBusTiming(id){
+    await fetch(
+      `/api/get_bus?id=${id}`
+    ).then((resp)=>{
+      if (resp.ok){
+        resp.json().then((data)=>{
+          console.log(JSON.parse(data.data))
+          setopen(JSON.parse(data.data));
+        })
+      }else{
+        setopen(404)
       
     }})
   }
@@ -233,7 +248,7 @@ export default function Home() {
         {data.length!=0 ? ((data == 404)?<div>No Bus Route Found.</div>:
           <>
           {data.map((a)=>{
-            return <div className="bus-card" onClick={()=> setopen(true)}>
+            return <div className="bus-card" onClick={()=> getBusTiming(a.bus_code)}>
             <div className="top">
               <h6>{a.bus_type}</h6>
               <p>10:00 - 12:00</p>
@@ -276,16 +291,19 @@ export default function Home() {
       </div>
       <div style={{ width: "55%", display:"flex", justifyContent:"center", alignItem:"center" }}>
         {open ? (<Timeline position="left">
-          <TimelineItem variant="right">
+          {open.map((b)=>{
+            return <TimelineItem variant="right">
             <TimelineOppositeContent color="text.secondary">
-              10:00am
+              {b.stop_timing}
             </TimelineOppositeContent>
             <TimelineSeparator>
               <TimelineDot />
               <TimelineConnector />
             </TimelineSeparator>
-            <TimelineContent>Trivandrum</TimelineContent>
+            <TimelineContent>{b.bus_stop}</TimelineContent>
           </TimelineItem>
+          })}
+          
           <TimelineItem>
             <TimelineOppositeContent color="text.secondary">
               10:05am
