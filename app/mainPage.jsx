@@ -25,15 +25,16 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import L from "leaflet";
 import "leaflet-loading";
 import { ImSpinner2 } from 'react-icons/im'
-import { MapContainer, useMap, TileLayer } from "react-leaflet";
+import { MapContainer, useMap, TileLayer, Marker, Popup } from "react-leaflet";
 import ReactLeafletGoogleLayer from "react-leaflet-google-layer";
 import { FullscreenControl } from "react-leaflet-fullscreen";
 import { GeoSearchControl, LocationIQProvider } from "leaflet-geosearch";
 
 // Component imports
-import { db, submitData } from "@/components/fb/db";
 import { Logo } from "@/components/ui/logo";
+import app from "@/components/fb/config";
 import { get } from "firebase/database";
+import { doc, onSnapshot, getFirestore } from "firebase/firestore";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { stops } from "@/components/map/stoplist";
@@ -41,14 +42,8 @@ import { RiLoader2Fill, RiLoader2Line } from "react-icons/ri";
 import { TextField, Box, Paper } from "@mui/material";
 import BusDetails from "./BusDetails";
 
-const getIssueString = (i) =>
-  [
-    "Water Unavailibilty",
-    "Sewer Overflow",
-    "Water Pipeline Disrupt",
-    "Water rise in sea/rivers",
-    "Flood warning!",
-  ][parseInt(i) - 1];
+
+const db = getFirestore(app);
 
 function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
   const map = useMap();
@@ -79,7 +74,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
     map.locate({ enableHighAccuracy: true });
     map.on("locationfound", function (e) {
       var marker = L.marker(e.latlng, {
-        icon: markerBus,
+        icon: markerSelf,
         draggable: false,
       }).bindTooltip("Your are here.");
       marker.addTo(map);
@@ -98,39 +93,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
 
     // LOCATION MARKERS
     // -> Loads marker data from firebase DB, and adds to UI.
-    get(db)
-      .then((ss) => {
-        if (ss.exists()) {
-          ss.forEach((de) => {
-            const d = de.val();
-            /*
-
-              d:list [Data Object]
-                n:str -> Bus Display Name
-                bid:str -> BUS ID (unique)
-                t:str -> Datetime
-                lq:list -> [latlng:list [lat:float,lng:float], stop_n:str]
-
-              */
-            let marker = markerBus;
-            L.marker(d.lq[0], { icon: marker })
-              .bindTooltip(
-                `<b>${getIssueString(
-                  d.ty
-                )}</b><br/><small class='text-muted'>Click to view.</small>`
-              )
-              .on("click", (e) => {
-                console.log(de.key);
-                handleShowModal();
-              })
-              .addTo(map);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
+    
     // GEOSEARCH
     // -> Allows users to search a location,
     // -> Gets readable address from the location
@@ -162,6 +125,7 @@ function AddMapControls({ setCAddress, setPosition, handleShowModal }) {
     return () => map.removeControl(searchControl);
   }, []);
 
+
   return null;
 }
 
@@ -178,6 +142,8 @@ export default function Home() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
+  const [busPositon, setBuspostion] = useState([]);
+
   const sbmit = (e) => {
     e.preventDefault();
     const d = {
@@ -193,6 +159,14 @@ export default function Home() {
       location.reload();
     });
   };
+
+  useEffect(()=>{
+    const docRef = doc(db, "bus", "13645")
+    const unsub = onSnapshot(docRef, (doc) => {
+      console.log(doc.data())
+            setBuspostion(doc.data())
+        });
+  },[]);
 
   useEffect(() => {
     window.addEventListener("hashchange", function (e) {
@@ -318,6 +292,11 @@ export default function Home() {
                 setPosition={setPosition}
                 handleShowModal={handleShowModal}
               />
+              <Marker position={busPositon.l}>
+              <Popup>
+              {busPositon[1]}
+              </Popup>
+            </Marker>
             </>
           ) : null}
         </MapContainer>
