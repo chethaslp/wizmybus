@@ -14,6 +14,21 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
+import { FaBus } from "react-icons/fa6";
+import {
+  Timeline,
+  TimelineItem,
+  TimelineSeparator,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
+  TimelineOppositeContent,
+  Skeleton,
+} from "@mui/lab";
+import { Box, Typography } from "@mui/material";
+import { Stack } from "react-bootstrap";
+
+
 import { markerBlue, markerBus, markerSelf } from "@/components/map/icons";
 import { MdMyLocation } from "react-icons/md";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
@@ -39,8 +54,6 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { stops } from "@/components/map/stoplist";
 import { RiLoader2Fill, RiLoader2Line } from "react-icons/ri";
-import { TextField, Box, Paper } from "@mui/material";
-import BusDetails from "./BusDetails";
 
 
 const db = getFirestore(app);
@@ -143,23 +156,32 @@ export default function Home() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
-  const [data, setdata] = useState(true);
+  const [data, setdata] = useState([]);
   const [open, setopen] = useState(false)
 
   const [busPositon, setBuspostion] = useState();
 
+  const skeletonStyle = {
+    marginBottom: 10, // Adjust the margin-bottom value as needed
+  };
 
-  function getBusdata(setdata){
-    const resp = fetch(
-      `/api/get_loc/?to=${tolocation}&from=${frmlocation}`
-    );
-    if (resp.ok){
-      const data = resp.json();
-      setdata(data.data);
-    }else{
-      setdata(404)
-    }
+
+  async function getBusdata(){
+    await fetch(
+      `/api/get_loc?to=${tolocation}&from=${frmlocation}`
+    ).then((resp)=>{
+      if (resp.ok){
+        resp.json().then((data)=>{
+          console.log(JSON.parse(data.data))
+          setdata(JSON.parse(data.data));
+        })
+      }else{
+        setdata(404)
+      
+    }})
   }
+
+  
 
   const sbmit = (e) => {
     e.preventDefault();
@@ -206,7 +228,103 @@ export default function Home() {
           <Modal.Title>Available Buses</Modal.Title>
         </Modal.Header>
         <Modal.Body >
-          <BusDetails setopen={setopen} setdata={setdata} data={data} open={open}/>
+        <div className="bus-detail">
+      <div className="border-r-2 pr-5 h-full" style={{ width: "45%", cursor:"pointer"}}>
+        {data.length!=0 ? ((data == 404)?<div>No Bus Route Found.</div>:
+          <>
+          {data.map((a)=>{
+            return <div className="bus-card" onClick={()=> setopen(true)}>
+            <div className="top">
+              <h6>{a.bus_type}</h6>
+              <p>10:00 - 12:00</p>
+            </div>
+            <div className="main">
+              <h6>{a.route_name}</h6>
+              <p>Via {a.via_route}</p>
+            </div>
+          </div>
+          })}
+          </>
+        ) : (
+          <>
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+            <Skeleton
+              variant="rectangular"
+              width={320}
+              height={200}
+              style={skeletonStyle}
+            />
+          </>
+        )}
+      </div>
+      <div style={{ width: "55%", display:"flex", justifyContent:"center", alignItem:"center" }}>
+        {open ? (<Timeline position="left">
+          <TimelineItem variant="right">
+            <TimelineOppositeContent color="text.secondary">
+              10:00am
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineDot />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Trivandrum</TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineOppositeContent color="text.secondary">
+              10:05am
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <FaBus size={22} />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Kollam</TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineOppositeContent color="text.secondary">
+              10:10am
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineDot />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Allapuzha</TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineDot />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Thrissur</TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineDot />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Kozhikode</TimelineContent>
+          </TimelineItem>
+        </Timeline>) : ( <h5>Select any bus</h5> )}
+        
+      </div>
+    </div>
+
         </Modal.Body>
       </Modal>
 
@@ -274,7 +392,9 @@ export default function Home() {
                 <Button
                   variant="primary"
                   type="submit"
-                  onClick={handleShowModal}
+                  onClick={()=>{
+                  handleShowModal()
+                  getBusdata()}}
                 >
                   Search
                 </Button>
