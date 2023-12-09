@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "firebase": "^10.7.0",
+    "geolocation": "^0.2.0",
     "leaflet": "^1.9.4",
     "leaflet-geosearch": "^3.11.0",
     "leaflet-loading": "^0.1.24",

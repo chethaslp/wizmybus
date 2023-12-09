@@ -9,12 +9,12 @@ const markerBlue = L.icon({
 });
 
 
-const markerRed = L.icon({
-  iconSize: [25, 41],
-  iconAnchor: [10, 30],
+const markerBus = L.icon({
+  iconSize: [40, 40],
+  iconAnchor: [50, 50],
   popupAnchor: [2, -40],
-  iconUrl: "/flood-marker.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png"
+  iconUrl: "/busmark.png",
+  //shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png"
 });
 
 const markerSelf = L.icon({
@@ -25,4 +25,4 @@ const markerSelf = L.icon({
   shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png"
 });
 
-export {markerBlue, markerRed, markerSelf}
+export {markerBlue, markerBus, markerSelf}
