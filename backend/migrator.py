@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
-import psycopg2
+
 import json
 
 cred = credentials.Certificate("./secrets/cred.json")
