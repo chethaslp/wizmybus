@@ -1,13 +1,21 @@
-
-
-@media screen and (max-width: 768px){
-    .responsive{
-        display: flex;
-        flex-direction: column-reverse;
-    }
-    .leaflet-left {
-        visibility: hidden;
-    }
-    
-    
+.bus-card{
+    height: 10rem;
+    margin-bottom: 5px;
+    border: solid 1px #00000036;
+    border-radius: 9px;
+    padding: 10px 20px;
+}
+.bus-detail{
+    display: flex;
+}
+.top{
+    display: flex;
+    justify-content: space-between;
+}
+.top h6{
+    height: 19px;
+    font-size: 13px;
+    color: white;
+    background-color: #ff1010;
+    padding: 2px 11px;
 }
